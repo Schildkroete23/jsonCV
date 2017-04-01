@@ -27,6 +27,28 @@ latex += "\\faPhone\\ {0}\n".format(data["phone"])
 latex += "\\faLink\\ \\href{{{0}}}{{{0}}}\n".format(data["homepage"])
 latex += "}}\n"
 latex += "\\end{center}\n"
+# education
+latex += "\\section*{\\faGraduationCap\\ Bildung}\n"
+for institute in data["education"]:
+    latex += "\\subsection*{{{0}}}\n".format(institute["institution"])
+    latex += "\\faMapMarker\\ {}".format(institute["place"])
+    if institute.get("end", False):
+        latex += " \\ \\faCalendar\\ {} - {}\\\\\n".format(
+            institute["begin"], institute["end"])
+    else:
+        latex += " \\ \\faCalendar\\ {}\\\\\n".format(institute["begin"])
+    latex += "\\textit{{{0}}}".format(institute["role"])
+    if institute.get("graduation", False):
+        latex += "\\\\\nAbschluss: " + institute["graduation"]
+    if institute.get("ba_topic", False):
+        latex += "\\\\\nThema der Bachelorarbeit: "
+        latex += institute["ba_topic"]
+    if institute.get("focus", False):
+        latex += "\\\\\nSchwerpunkte: "
+        for item in institute["focus"]:
+            latex += item
+            if item != institute["focus"][-1]:
+                latex += ", "
 latex += "\\end{document}"
 
 with open("cv.tex", 'w') as tex:

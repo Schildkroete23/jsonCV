@@ -5,5 +5,20 @@
 "city": "Musterstadt",
 "phone": "0123-456789",
 "mail": "max@mustermann.com",
-"homepage": "http://mustermann.com"
+"homepage": "http://mustermann.com",
+"education": [
+{
+"institution": "Musteruniversität, Musterfakultät",
+"place": "Musterstadt",
+"begin": "2013",
+"end": "2016",
+"role": "Student im Bachelorstudiengang Mustern",
+"graduation": "Bachelor of Muster",
+"ba_topic": "Gestalten von Mustern",
+"focus": [
+"Muster",
+"Gestaltung"
+]
+}
+]
 }
