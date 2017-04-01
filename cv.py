@@ -49,6 +49,22 @@ for institute in data["education"]:
             latex += item
             if item != institute["focus"][-1]:
                 latex += ", "
+    # work experience
+    latex += "\\section*{\\faBriefcase\\ Arbeitserfahrung}\n"
+    for company in data["work"]:
+        latex += "\\subsection*{{{0}}}\n".format(company["company"])
+        latex += "\\faMapMarker\\ {}".format(company["place"])
+        if company.get("end", False):
+            latex += " \\ \\faCalendar\\ {} - {}\\\\\n".format(
+                company["begin"], company["end"])
+        else:
+            latex += " \\ \\faCalendar\\ {}\\\\\n".format(company["begin"])
+        latex += "\\textit{{{0}}}\\\\\n".format(company["role"])
+        for task in company["tasks"]:
+            latex += task
+            if task != company["tasks"][-1]:
+                latex += ", "
+        latex += "\n"
 latex += "\\end{document}"
 
 with open("cv.tex", 'w') as tex:

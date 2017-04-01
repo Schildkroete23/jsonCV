@@ -20,5 +20,18 @@
 "Gestaltung"
 ]
 }
+],
+"work": [
+{
+"company": "Muster GmbH",
+"place": "Musterstadt",
+"begin": "2015",
+"end": "heute",
+"role": "Musterer",
+"tasks": [
+"Gestalten von Mustern",
+"Erstellung von Mustern"
+]
+}
 ]
 }
