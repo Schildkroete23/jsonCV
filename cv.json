@@ -1,0 +1,9 @@
+{
+"name": "Max Mustermann",
+"street": "Musterstraße 1",
+"zip": "12345",
+"city": "Musterstadt",
+"phone": "0123-456789",
+"mail": "max@mustermann.com",
+"homepage": "http://mustermann.com"
+}
