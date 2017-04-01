@@ -6,6 +6,9 @@
 "phone": "0123-456789",
 "mail": "max@mustermann.com",
 "homepage": "http://mustermann.com",
+"languages": ["Deutsch", "Englisch"],
+"coding": ["Python", "Fortran"],
+"software": ["Word", "Excel", "PowerPoint"],
 "education": [
 {
 "institution": "Musteruniversität, Musterfakultät",

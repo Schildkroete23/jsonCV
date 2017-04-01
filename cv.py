@@ -12,6 +12,7 @@ print(type(latex))
 latex += "\\usepackage[ngerman]{babel}\n"
 latex += "\\usepackage{fontawesome}\n"
 latex += "\\usepackage{hyperref}\n"
+latex += "\\usepackage{multicol}\n"
 latex += "\\begin{document}\n"
 # turn off page numbering
 latex += "\\pagenumbering{gobble}\n"
@@ -65,6 +66,29 @@ for institute in data["education"]:
             if task != company["tasks"][-1]:
                 latex += ", "
         latex += "\n"
+    # skills
+    latex += "\\section*{\\faCogs\\ Kenntnisse \\& Fähigkeiten}\n"
+    latex += "\\begin{multicols}{2}\n"
+    latex += "\\raggedright\n"
+    # languages
+    latex += "\\subsection*{\\faGlobe\\ Sprachen}\n"
+    for language in data["languages"]:
+        latex += language
+        if language != data["languages"][-1]:
+            latex += ", "
+    # coding skills
+    latex += "\n\\subsection*{\\faCode\\ Computerprachen}\n"
+    for item in data["coding"]:
+        latex += item
+        if item != data["coding"][-1]:
+            latex += ", "
+    # software skills
+    latex += "\n\\subsection*{\\faDesktop\\ Software}\n"
+    for item in data["software"]:
+        latex += item
+        if item != data["software"][-1]:
+            latex += ", "
+    latex += "\n\\end{multicols}\n"
 latex += "\\end{document}"
 
 with open("cv.tex", 'w') as tex:
