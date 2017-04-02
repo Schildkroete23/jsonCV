@@ -29,6 +29,9 @@ latex += "\\pagenumbering{gobble}\n"
 # general information
 latex += "\\begin{center}\n"
 latex += "{{\\Huge\\scshape{{{0}}}}}\\\\\n".format(data["name"])
+if data.get("picture", False):
+    latex += "\\includegraphics[height=3cm]{{{0}}}\\\\\n".format(
+        data["picture"])
 latex += "{\\sffamily\\large{%\n"
 latex += "\\faHome\\ {0}, {1} {2}\\\\\n".format(data["street"],
                                                 data["zip"], data["city"])
