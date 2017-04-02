@@ -1,14 +1,13 @@
 import json
 import os
+import sys
 
 # read cv data in
-with open("cv.json", 'r') as jsonData:
+with open(sys.argv[1], 'r') as jsonData:
     data = json.load(jsonData)
-print(type(data["zip"]))
-print(type(data["city"]))
+
 # write data to tex file
 latex = "\\documentclass[11pt]{article}\n"
-print(type(latex))
 latex += "\\usepackage[ngerman]{babel}\n"
 latex += "\\usepackage{fontawesome}\n"
 latex += "\\usepackage{hyperref}\n"
@@ -63,45 +62,45 @@ for institute in data["education"]:
             latex += item
             if item != institute["focus"][-1]:
                 latex += ", "
-    # work experience
-    latex += "\\section*{\\faBriefcase\\ Arbeitserfahrung}\n"
-    for company in data["work"]:
-        latex += "\\subsection*{{{0}}}\n".format(company["company"])
-        latex += "\\faMapMarker\\ {}".format(company["place"])
-        if company.get("end", False):
-            latex += " \\ \\faCalendar\\ {} - {}\\\\\n".format(
-                company["begin"], company["end"])
-        else:
-            latex += " \\ \\faCalendar\\ {}\\\\\n".format(company["begin"])
-        latex += "\\textit{{{0}}}\\\\\n".format(company["role"])
-        for task in company["tasks"]:
-            latex += task
-            if task != company["tasks"][-1]:
-                latex += ", "
-        latex += "\n"
-    # skills
-    latex += "\\section*{\\faCogs\\ Kenntnisse \\& Fähigkeiten}\n"
-    latex += "\\begin{multicols}{2}\n"
-    latex += "\\raggedright\n"
-    # languages
-    latex += "\\subsection*{\\faGlobe\\ Sprachen}\n"
-    for language in data["languages"]:
-        latex += language
-        if language != data["languages"][-1]:
+# work experience
+latex += "\\section*{\\faBriefcase\\ Arbeitserfahrung}\n"
+for company in data["work"]:
+    latex += "\\subsection*{{{0}}}\n".format(company["company"])
+    latex += "\\faMapMarker\\ {}".format(company["place"])
+    if company.get("end", False):
+        latex += " \\ \\faCalendar\\ {} - {}\\\\\n".format(
+            company["begin"], company["end"])
+    else:
+        latex += " \\ \\faCalendar\\ {}\\\\\n".format(company["begin"])
+    latex += "\\textit{{{0}}}\\\\\n".format(company["role"])
+    for task in company["tasks"]:
+        latex += task
+        if task != company["tasks"][-1]:
             latex += ", "
-    # coding skills
-    latex += "\n\\subsection*{\\faCode\\ Computerprachen}\n"
-    for item in data["coding"]:
-        latex += item
-        if item != data["coding"][-1]:
-            latex += ", "
-    # software skills
-    latex += "\n\\subsection*{\\faDesktop\\ Software}\n"
-    for item in data["software"]:
-        latex += item
-        if item != data["software"][-1]:
-            latex += ", "
-    latex += "\n\\end{multicols}\n"
+    latex += "\n"
+# skills
+latex += "\\section*{\\faCogs\\ Kenntnisse \\& Fähigkeiten}\n"
+latex += "\\begin{multicols}{2}\n"
+latex += "\\raggedright\n"
+# languages
+latex += "\\subsection*{\\faGlobe\\ Sprachen}\n"
+for language in data["languages"]:
+    latex += language
+    if language != data["languages"][-1]:
+        latex += ", "
+# coding skills
+latex += "\n\\subsection*{\\faCode\\ Computerprachen}\n"
+for item in data["coding"]:
+    latex += item
+    if item != data["coding"][-1]:
+        latex += ", "
+# software skills
+latex += "\n\\subsection*{\\faDesktop\\ Software}\n"
+for item in data["software"]:
+    latex += item
+    if item != data["software"][-1]:
+        latex += ", "
+latex += "\n\\end{multicols}\n"
 latex += "\\end{document}"
 
 with open("cv.tex", 'w') as tex:
