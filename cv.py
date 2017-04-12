@@ -26,23 +26,38 @@ latex += "\\begin{document}\n"
 # turn off page numbering
 latex += "\\pagenumbering{gobble}\n"
 # general information
-latex += "\\begin{center}\n"
-latex += "{{\\Huge\\scshape{{{0}}}}}\\\\\n".format(data["name"])
 if data.get("picture", False):
-    latex += "\\includegraphics[height=3cm]{{{0}}}\\\\\n".format(
+    latex += "\\noindent\\begin{minipage}{0.85\\textwidth}\\raggedright%\n"
+    latex += "{{\\Huge\\scshape{{{0}}}}}\\\\\n".format(data["name"])
+    latex += "{\\sffamily\\large{%\n"
+    latex += "\\faHome\\ {0}, {1} {2}\\\\\n".format(data["street"],
+                                                    data["zip"], data["city"])
+    latex += "\\faEnvelope\\ \\href{{mailto:{0}}}{{{0}}}\\\\\n".format(
+        data["mail"])
+    latex += "\\faPhone\\ {0}\\\\\n".format(data["phone"])
+    latex += "\\faLink\\ \\href{{{0}}}{{{0}}}\n".format(data["homepage"])
+    latex += "}}\n"
+    latex += "\end{minipage}\n"
+    latex += "\\noindent\\begin{minipage}{0.15\\textwidth}\n"
+    latex += "\\includegraphics[width=0.9\\textwidth]{{{0}}}\n".format(
         data["picture"])
-latex += "{\\sffamily\\large{%\n"
-latex += "\\faHome\\ {0}, {1} {2}\\\\\n".format(data["street"],
-                                                data["zip"], data["city"])
-latex += "\\faEnvelope\\ \\href{{mailto:{0}}}{{{0}}}\n".format(
-    data["mail"])
-latex += "\\faPhone\\ {0}\n".format(data["phone"])
-latex += "\\faLink\\ \\href{{{0}}}{{{0}}}\n".format(data["homepage"])
-latex += "}}\n"
-latex += "\\end{center}\n"
+    latex += "\end{minipage}%\n"
+else:
+    latex += "\\begin{center}\n"
+    latex += "{{\\Huge\\scshape{{{0}}}}}\\\\\n".format(data["name"])
+    latex += "{\\sffamily\\large{%\n"
+    latex += "\\faHome\\ {0}, {1} {2}\\\\\n".format(data["street"],
+                                                    data["zip"], data["city"])
+    latex += "\\faEnvelope\\ \\href{{mailto:{0}}}{{{0}}}\n".format(
+        data["mail"])
+    latex += "\\faPhone\\ {0}\n".format(data["phone"])
+    latex += "\\faLink\\ \\href{{{0}}}{{{0}}}\n".format(data["homepage"])
+    latex += "}}\n"
+    latex += "\\end{center}\n"
 # education
 latex += "\\section*{\\faGraduationCap\\ Bildung}\n"
-for institute in data["education"]:
+for i in range(len(data["education"])):
+    institute = data["education"][i]
     latex += "\\subsection*{{{0}}}\n".format(institute["institution"])
     latex += "\\faMapMarker\\ {}".format(institute["place"])
     if institute.get("end", False):
