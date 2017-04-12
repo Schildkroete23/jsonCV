@@ -36,7 +36,8 @@ if data.get("picture", False):
     latex += "\\faEnvelope\\ \\href{{mailto:{0}}}{{{0}}}\\\\\n".format(
         data["mail"])
     latex += "\\faPhone\\ {0}\\\\\n".format(data["phone"])
-    latex += "\\faLink\\ \\href{{{0}}}{{{0}}}\n".format(data["homepage"])
+    if data.get("homepage", False):
+        latex += "\\faLink\\ \\href{{{0}}}{{{0}}}\n".format(data["homepage"])
     latex += "}}\n"
     latex += "\end{minipage}\n"
     latex += "\\noindent\\begin{minipage}{0.15\\textwidth}\n"
@@ -52,7 +53,8 @@ else:
     latex += "\\faEnvelope\\ \\href{{mailto:{0}}}{{{0}}}\n".format(
         data["mail"])
     latex += "\\faPhone\\ {0}\n".format(data["phone"])
-    latex += "\\faLink\\ \\href{{{0}}}{{{0}}}\n".format(data["homepage"])
+    if data.get("homepage", False):
+        latex += "\\faLink\\ \\href{{{0}}}{{{0}}}\n".format(data["homepage"])
     latex += "}}\n"
     latex += "\\end{center}\n"
 # education
@@ -105,17 +107,19 @@ for language in data["languages"]:
     if language != data["languages"][-1]:
         latex += ", "
 # coding skills
-latex += "\n\\subsection*{\\faCode\\ Computerprachen}\n"
-for item in data["coding"]:
-    latex += item
-    if item != data["coding"][-1]:
-        latex += ", "
+if data.get("coding", False):
+    latex += "\n\\subsection*{\\faCode\\ Computerprachen}\n"
+    for item in data["coding"]:
+        latex += item
+        if item != data["coding"][-1]:
+            latex += ", "
 # software skills
-latex += "\n\\subsection*{\\faDesktop\\ Software}\n"
-for item in data["software"]:
-    latex += item
-    if item != data["software"][-1]:
-        latex += ", "
+if data.get("software", False):
+    latex += "\n\\subsection*{\\faDesktop\\ Software}\n"
+    for item in data["software"]:
+        latex += item
+        if item != data["software"][-1]:
+            latex += ", "
 latex += "\n\\end{multicols}\n"
 latex += "\\end{document}"
 
