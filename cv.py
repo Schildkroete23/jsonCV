@@ -64,11 +64,12 @@ for i in range(len(data["education"])):
     latex += "\\subsection*{{{0}}}\n".format(institute["institution"])
     latex += "\\faMapMarker\\ {}".format(institute["place"])
     if institute.get("end", False):
-        latex += " \\ \\faCalendar\\ {} - {}\\\\\n".format(
+        latex += " \\ \\faCalendar\\ {} - {}".format(
             institute["begin"], institute["end"])
     else:
-        latex += " \\ \\faCalendar\\ {}\\\\\n".format(institute["begin"])
-    latex += "\\textit{{{0}}}".format(institute["role"])
+        latex += " \\ \\faCalendar\\ {}".format(institute["begin"])
+    if institute.get("role", False):
+        latex += "\\\\\n\\textit{{{0}}}".format(institute["role"])
     if institute.get("graduation", False):
         latex += "\\\\\nAbschluss: " + institute["graduation"]
     if institute.get("ba_topic", False):
@@ -86,15 +87,18 @@ for company in data["work"]:
     latex += "\\subsection*{{{0}}}\n".format(company["company"])
     latex += "\\faMapMarker\\ {}".format(company["place"])
     if company.get("end", False):
-        latex += " \\ \\faCalendar\\ {} - {}\\\\\n".format(
+        latex += " \\ \\faCalendar\\ {} - {}".format(
             company["begin"], company["end"])
     else:
-        latex += " \\ \\faCalendar\\ {}\\\\\n".format(company["begin"])
-    latex += "\\textit{{{0}}}\\\\\n".format(company["role"])
-    for task in company["tasks"]:
-        latex += task
-        if task != company["tasks"][-1]:
-            latex += ", "
+        latex += " \\ \\faCalendar\\ {}".format(company["begin"])
+    if company.get("role", False):
+        latex += "\\\\\n\\textit{{{0}}}".format(company["role"])
+    if company.get("tasks", False):
+        latex += "\\\\\n"
+        for task in company["tasks"]:
+            latex += task
+            if task != company["tasks"][-1]:
+                latex += ", "
     latex += "\n"
 # skills
 latex += "\\section*{\\faCogs\\ Kenntnisse \\& Fähigkeiten}\n"
