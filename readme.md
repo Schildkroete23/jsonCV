@@ -10,7 +10,9 @@ This script converts cv data in json database format to a pdf.
 ## Execution
 
 Just type
-`python cv.py cv.json`
+`python cv.py cv.json pdf`
 in the terminal to convert the JSON database file `cv.json`
 (this is the file where the data for your cv is stored)
 to a pdf.
+For a html version type
+`python cv.py cv.json html`.

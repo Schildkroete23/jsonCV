@@ -1,6 +1,7 @@
 {
 "name": "Max Mustermann",
-"picture": "avatar",
+"picture": "avatar.jpg",
+"job": "Student",
 "street": "Musterstraße 1",
 "zip": "12345",
 "city": "Musterstadt",
