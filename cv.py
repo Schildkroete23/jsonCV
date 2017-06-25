@@ -33,10 +33,10 @@ if sys.argv[-1].lower() == "pdf":
     latex += "\\vspace{0pt}%\n"
     # picture
     if data.get("picture", False):
-        latex += "\\includegraphics[width=.25\\textwidth]{{{0}}}\n".format(
+        latex += "\\includegraphics[width=\\linewidth]{{{0}}}\n".format(
             data["picture"])
     latex += "\\begin{tabbing}%\n"
-    latex += "{{\\huge\\scshape{{{0}}}}}".format(data["name"])
+    latex += "\\textbf{{\\LARGE\\scshape{{{0}}}}}".format(data["name"])
     # job
     if data.get("job", False):
         latex += "\\\\\n\\faBriefcase\\ {}".format(data["job"])
@@ -127,31 +127,6 @@ if sys.argv[-1].lower() == "pdf":
     latex += "\\hfill\\vline\\hfill%\n"
     latex += "\parbox[t][.99\\textheight]{.7\\textwidth}{%\n"
     latex += "\\vspace{0pt}%\n"
-    # education
-    if data.get("education", False):
-        latex += "\\section*{\\faGraduationCap\\ Bildung}\n"
-        for i in range(len(data["education"])):
-            institute = data["education"][i]
-            latex += "\\subsection*{{{0}}}\n".format(institute["institution"])
-            latex += "\\faMapMarker\\ {}".format(institute["place"])
-            if institute.get("end", False):
-                latex += " \\ \\faCalendar\\ {} - {}".format(
-                    institute["begin"], institute["end"])
-            else:
-                latex += " \\ \\faCalendar\\ {}".format(institute["begin"])
-            if institute.get("role", False):
-                latex += "\\\\\n\\textit{{{0}}}".format(institute["role"])
-            if institute.get("graduation", False):
-                latex += "\\\\\nAbschluss: " + institute["graduation"]
-            if institute.get("ba_topic", False):
-                latex += "\\\\\nThema der Bachelorarbeit: "
-                latex += institute["ba_topic"]
-            if institute.get("focus", False):
-                latex += "\\\\\nSchwerpunkte: "
-                for item in institute["focus"]:
-                    latex += item
-                    if item != institute["focus"][-1]:
-                        latex += ", "
     # work experience
     if data.get("work", False):
         latex += "\\section*{\\faGears\\ Arbeitserfahrung}\n"
@@ -172,8 +147,37 @@ if sys.argv[-1].lower() == "pdf":
                 for task in company["tasks"]:
                     latex += task
                     if task != company["tasks"][-1]:
-                        latex += ", "
+                        latex += "; "
             latex += "\n"
+    # education
+    if data.get("education", False):
+        latex += "\\section*{\\faGraduationCap\\ Bildung}\n"
+        for i in range(len(data["education"])):
+            institute = data["education"][i]
+            latex += "\\subsection*{{{0}}}\n".format(institute["institution"])
+            latex += "\\faMapMarker\\ {}".format(institute["place"])
+            if institute.get("end", False):
+                latex += " \\ \\faCalendar\\ {} - {}".format(
+                    institute["begin"], institute["end"])
+            else:
+                latex += " \\ \\faCalendar\\ {}".format(institute["begin"])
+            if institute.get("role", False):
+                latex += "\\\\\n\\textit{{{0}}}".format(institute["role"])
+            if institute.get("graduation", False):
+                latex += "\\\\\n\\underline{Abschluss}: "
+                latex += institute["graduation"]
+            if institute.get("ba_topic", False):
+                latex += "\\\\\n\\underline{Thema der Bachelorarbeit}: "
+                latex += institute["ba_topic"]
+            if institute.get("focus", False):
+                if institute.get("focus", False):
+                    latex += "\\\\\n\\underline{Schwerpunkt}: "
+                else:
+                    latex += "\\\\\n\\underline{Schwerpunkte}: "
+                for item in institute["focus"]:
+                    latex += item
+                    if item != institute["focus"][-1]:
+                        latex += ", "
     # civil service
     if data.get("civil_service", False):
         latex += "\\section*{\\faGroup\\ Zivildienst}\n"
@@ -198,7 +202,7 @@ if sys.argv[-1].lower() == "pdf":
                 for task in company["tasks"]:
                     latex += task
                     if task != company["tasks"][-1]:
-                        latex += ", "
+                        latex += "; "
             latex += "\n"
     latex += "\n}\n"
     latex += "\\end{document}"
@@ -322,7 +326,10 @@ elif sys.argv[-1].lower() == "html":
             html += "<br>Thema der Bachelorarbeit: {}".format(
                 institute["ba_topic"])
         if institute.get("focus", False):
-            html += "<br>Schwerpunkte: "
+            if len(institute["focus"]) == 1:
+                html += "<br>Schwerpunkt: "
+            else:
+                html += "<br>Schwerpunkte: "
             for item in institute["focus"]:
                 html += item
                 if item != institute["focus"][-1]:
@@ -360,7 +367,7 @@ elif sys.argv[-1].lower() == "html":
         for task in company["tasks"]:
             html += task
             if task != company["tasks"][-1]:
-                html += ", "
+                html += "; "
         if company != data["work"][-1]:
             html += "</p><hr></div>"
         else:
@@ -396,7 +403,7 @@ elif sys.argv[-1].lower() == "html":
             for task in company["tasks"]:
                 html += task
                 if task != company["tasks"][-1]:
-                    html += ", "
+                    html += "; "
             html += "</p></div>"
     html += "</div></div></div></div>"
     # footer
