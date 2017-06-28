@@ -10,7 +10,7 @@ with open(sys.argv[1], 'r') as jsonData:
 if sys.argv[-1].lower() == "pdf":
     # write data to tex file
     latex = "\\documentclass[11pt]{article}\n"
-    latex += "\\usepackage[ngerman, english]{babel}\n"
+    latex += "\\usepackage[ngerman, UKenglish]{babel}\n"
     latex += "\\usepackage{fontawesome}\n"
     # set main font type
     latex += "\\setmainfont{SOURCE SANS PRO}\n"
@@ -27,6 +27,8 @@ if sys.argv[-1].lower() == "pdf":
     latex += "\\begin{document}%\n"
     if data["language"] == "german":
         latex += "\selectlanguage{ngerman}\n"
+    else:
+        latex += "\selectlanguage{UKenglish}\n"
     # turn off page numbering
     latex += "\\pagenumbering{gobble}%\n"
     # general information
@@ -38,7 +40,7 @@ if sys.argv[-1].lower() == "pdf":
         latex += "\\includegraphics[width=\\linewidth]{{{0}}}\n".format(
             data["picture"])
     latex += "\\begin{tabbing}%\n"
-    latex += "\\textbf{{\\LARGE\\scshape{{{0}}}}}".format(data["name"])
+    latex += "\\textbf{{\\Huge\\scshape{{{0}}}}}".format(data["name"])
     # job
     if data.get("job", False):
         latex += "\\\\\n\\faBriefcase\\ {}".format(data["job"])
