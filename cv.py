@@ -226,7 +226,7 @@ if sys.argv[-1].lower() == "pdf":
         if data["language"] == "german":
             latex += "\\section*{\\faGroup\\ Zivildienst}\n"
         else:
-            latex += "\\section*{\\faGroup\\ Civil Service}\n"
+            latex += "\\section*{\\faGroup\\ Civilian Service}\n"
         for company in data["civil_service"]:
             tmpWord = ""
             for letter in company["company"]:
@@ -317,7 +317,10 @@ elif sys.argv[-1].lower() == "html":
     # languages
     html += "<hr><p class='w3-large'><b>"
     html += "<i class='fa fa-globe fa-fw w3-margin-right w3-text-teal'>"
-    html += "</i>Sprachen</b></p>"
+    if data["language"] == "german":
+        html += "</i>Sprachen</b></p>"
+    else:
+        html += "</i>Languages</b></p>"
     for language in data["languages"]:
         html += "<div class='w3-container w3-center w3-round-xlarge w3-teal' "
         html += "style='display: inline-block; margin: 3px;'>"
@@ -325,7 +328,10 @@ elif sys.argv[-1].lower() == "html":
     # coding skills
     html += "<hr><p class='w3-large'><b>"
     html += "<i class='fa fa-code fa-fw w3-margin-right w3-text-teal'>"
-    html += "</i>Computersprachen</b></p>"
+    if data["language"] == "german":
+        html += "</i>Computersprachen</b></p>"
+    else:
+        html += "</i>Coding</b></p>"
     for language in data["coding"]:
         html += "<div class='w3-container w3-center w3-round-xlarge w3-teal' "
         html += "style='display: inline-block; margin: 3px;'>"
@@ -345,7 +351,10 @@ elif sys.argv[-1].lower() == "html":
     html += "<div class='w3-container w3-card-2 w3-white w3-margin-bottom'>"
     html += "<h2 class='w3-text-grey w3-padding-16'>"
     html += "<i class='fa fa-graduation-cap fa-fw w3-margin-right w3-xxlarge "
-    html += "w3-text-teal'></i>Bildung</h2>"
+    if data["language"] == "german":
+        html += "w3-text-teal'></i>Bildung</h2>"
+    else:
+        html += "w3-text-teal'></i>Education</h2>"
     for institute in data["education"]:
         html += "<div class='w3-container'><h5 class='w3-opacity'><b>"
         html += institute["institution"]
@@ -359,6 +368,8 @@ elif sys.argv[-1].lower() == "html":
             html += ' - '
             if institute["end"].lower() == "heute":
                 html += "<span class='w3-tag w3-teal w3-round'>heute</span>"
+            elif institute["end"].lower() == "today":
+                html += "<span class='w3-tag w3-teal w3-round'>today</span>"
             else:
                 html += institute["end"]
         if institute.get("duration", False):
@@ -367,15 +378,25 @@ elif sys.argv[-1].lower() == "html":
         html += institute["role"]
         html += "</i>"
         if institute.get("graduation", False):
-            html += "<br>Abschluss: {}".format(institute["graduation"])
-        if institute.get("ba_topic", False):
-            html += "<br>Thema der Bachelorarbeit: {}".format(
-                institute["ba_topic"])
-        if institute.get("focus", False):
-            if len(institute["focus"]) == 1:
-                html += "<br>Schwerpunkt: "
+            if data["language"] == "german":
+                html += "<br>Abschluss: {}".format(institute["graduation"])
             else:
-                html += "<br>Schwerpunkte: "
+                html += "<br>Degree: {}".format(institute["graduation"])
+        if institute.get("ba_topic", False):
+            if data["language"] == "german":
+                html += "<br>Thema der Bachelorarbeit: {}".format(
+                    institute["ba_topic"])
+            else:
+                html += "<br>Topic of Bachelorthesis: {}".format(
+                    institute["ba_topic"])
+        if institute.get("focus", False):
+            if data["language"] == "german":
+                if len(institute["focus"]) == 1:
+                    html += "<br>Schwerpunkt: "
+                else:
+                    html += "<br>Schwerpunkte: "
+            else:
+                html += "<br>Focus: "
             for item in institute["focus"]:
                 html += item
                 if item != institute["focus"][-1]:
@@ -389,7 +410,10 @@ elif sys.argv[-1].lower() == "html":
     html += "<div class='w3-container w3-card-2 w3-white w3-margin-bottom'>"
     html += "<h2 class='w3-text-grey w3-padding-16'>"
     html += "<i class='fa fa-gears fa-fw w3-margin-right w3-xxlarge "
-    html += " w3-text-teal'></i>Arbeitserfahrung</h2>"
+    if data["language"] == "german":
+        html += " w3-text-teal'></i>Arbeitserfahrung</h2>"
+    else:
+        html += " w3-text-teal'></i>Work Experience</h2>"
     for company in data["work"]:
         html += "<div class='w3-container'><h5 class='w3-opacity'><b>"
         html += company["company"]
@@ -403,6 +427,8 @@ elif sys.argv[-1].lower() == "html":
             html += ' - '
             if company["end"].lower() == "heute":
                 html += "<span class='w3-tag w3-teal w3-round'>heute</span>"
+            elif company["end"].lower() == "today":
+                html += "<span class='w3-tag w3-teal w3-round'>today</span>"
             else:
                 html += company["end"]
         if company.get("duration", False):
@@ -424,7 +450,10 @@ elif sys.argv[-1].lower() == "html":
         html += "<div class='w3-container w3-card-2 w3-white'>"
         html += "<h2 class='w3-text-grey w3-padding-16'>"
         html += "<i class='fa fa-users fa-fw w3-margin-right w3-xxlarge "
-        html += "w3-text-teal'></i>Zivildienst</h2>"
+        if data["language"] == "german":
+            html += "w3-text-teal'></i>Zivildienst</h2>"
+        else:
+            html += "w3-text-teal'></i>Civilian Service</h2>"
         for company in data["civil_service"]:
             html += "<div class='w3-container'><h5 class='w3-opacity'><b>"
             html += company["company"]
@@ -439,6 +468,9 @@ elif sys.argv[-1].lower() == "html":
                 if company["end"].lower() == "heute":
                     html += "<span class='w3-tag w3-teal w3-round'>"
                     html += "heute</span>"
+                elif company["end"].lower() == "today":
+                    html += "<span class='w3-tag w3-teal w3-round'>"
+                    html += "today</span>"
                 else:
                     html += company["end"]
             if company.get("duration", False):
@@ -454,6 +486,10 @@ elif sys.argv[-1].lower() == "html":
     html += "</div></div></div></div>"
     # footer
     html += "<footer class='w3-container w3-teal w3-center w3-margin-top'>"
+    if data["language"] == "german":
+        html += "<p>Ich bin zu finden bei:</p>"
+    else:
+        html += "<p>Find me on:</p>"
     if data.get("xing", False):
         html += "<a href='{}' target='_blank'>".format(data["xing"])
         html += "<i class='fa fa-xing w3-hover-opacity'></i></a> "
@@ -461,12 +497,19 @@ elif sys.argv[-1].lower() == "html":
         html += "<a href='{}' target='_blank'>".format(data["linkedin"])
         html += "<i class='fa fa-linkedin w3-hover-opacity'></i></a> "
     if data.get("github", False):
-        html += "<a href='{}' target='_blank'>".format("github")
+        html += "<a href='{}' target='_blank'>".format(data["github"])
         html += "<i class='fa fa-github w3-hover-opacity'></i></a> "
-    html += "<p>Erstellt mit "
+    if data["language"] == "german":
+        html += "<p>Erstellt mit "
+    else:
+        html += "<p>Generated with "
     html += "<a href='https://github.com/Schildkroete23/jsonCV' "
     html += "target='_blank'>jsonCV</a>"
-    html += " und ausgerüstet mit <a href='https://www.w3schools.com/w3css/"
+    if data["language"] == "german":
+        html += " und ausgerüstet mit "
+    else:
+        html += " and powered by "
+    html += "<a href='https://www.w3schools.com/w3css/"
     html += "default.asp' target='_blank'>w3.css</a>.</p></footer>"
     html += "</body></html>"
     with open("cv.html", 'w') as cvhtml:
