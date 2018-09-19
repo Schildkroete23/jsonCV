@@ -10,14 +10,15 @@ with open(sys.argv[1], 'r') as jsonData:
 if sys.argv[-1].lower() == "pdf":
     # write data to tex file
     latex = "\\documentclass[11pt]{article}\n"
-    latex += "\\usepackage[ngerman, UKenglish]{babel}\n"
+    latex += "\\usepackage[ngerman, english]{babel}\n"
     latex += "\\usepackage{fontawesome}\n"
     # set main font type
     latex += "\\setmainfont{SOURCE SANS PRO}\n"
-    latex += "\\usepackage{hyperref}\n"
+    latex += "\\usepackage[hidelinks]{hyperref}\n"
     latex += ("\\usepackage[a4paper, top=0.5cm, bottom=1cm, left=1cm, "
               "right=1cm]{geometry}\n")
     latex += "\\usepackage{titlesec}\n"
+    latex += "\\usepackage{graphicx}\n"
     latex += "\\titleformat{\\section}{\\Large\\scshape\\raggedright}{}{0ex}{}"
     latex += "[\\titlerule]\n"
     latex += "\\titlespacing*{\\section}{0em}{2ex}{2ex}\n"
@@ -28,7 +29,7 @@ if sys.argv[-1].lower() == "pdf":
     if data["language"] == "german":
         latex += "\selectlanguage{ngerman}\n"
     else:
-        latex += "\selectlanguage{UKenglish}\n"
+        latex += "\selectlanguage{english}\n"
     # turn off page numbering
     latex += "\\pagenumbering{gobble}%\n"
     # general information
@@ -40,7 +41,7 @@ if sys.argv[-1].lower() == "pdf":
         latex += "\\includegraphics[width=\\linewidth]{{{0}}}\n".format(
             data["picture"])
     latex += "\\begin{tabbing}%\n"
-    latex += "\\textbf{{\\Huge\\scshape{{{0}}}}}".format(data["name"])
+    latex += "\\textbf{{\\Large\\scshape{{{0}}}}}".format(data["name"])
     # job
     if data.get("job", False):
         latex += "\\\\\n\\faBriefcase\\ {}".format(data["job"])
@@ -156,71 +157,86 @@ if sys.argv[-1].lower() == "pdf":
     latex += "\parbox[t][.99\\textheight]{.7\\textwidth}{%\n"
     latex += "\\vspace{0pt}%\n"
     # education
+    edu = ""
     if data.get("education", False):
         if data["language"] == "german":
-            latex += "\\section*{\\faGraduationCap\\ Bildung}\n"
+            edu += "\\section*{\\faGraduationCap\\ Bildung}\n"
         else:
-            latex += "\\section*{\\faGraduationCap\\ Education}\n"
-        for i in range(len(data["education"])):
+            edu += "\\section*{\\faGraduationCap\\ Education}\n"
+        if "limEd" in data.keys():
+            lim = int(data["limEd"])
+        else:
+            lim = len(data["education"])
+        for i in range(lim):
             institute = data["education"][i]
-            latex += "\\subsection*{{{0}}}\n".format(institute["institution"])
-            latex += "\\faMapMarker\\ {}".format(institute["place"])
+            edu += "\\subsection*{{{0}}}\n".format(institute["institution"])
+            edu += "\\faMapMarker\\ {}".format(institute["place"])
             if institute.get("end", False):
-                latex += " \\ \\faCalendar\\ {} - {}".format(
+                edu += " \\ \\faCalendar\\ {} - {}".format(
                     institute["begin"], institute["end"])
             else:
-                latex += " \\ \\faCalendar\\ {}".format(institute["begin"])
+                edu += " \\ \\faCalendar\\ {}".format(institute["begin"])
             if institute.get("role", False):
-                latex += "\\\\\n\\textit{{{0}}}".format(institute["role"])
+                edu += "\\\\\n\\textit{{{0}}}".format(institute["role"])
             if institute.get("graduation", False):
                 if data["language"] == "german":
-                    latex += "\\\\\n\\underline{Abschluss}: "
+                    edu += "\\\\\n\\underline{Abschluss}: "
                 else:
-                    latex += "\\\\\n\\underline{Degree}: "
-                latex += institute["graduation"]
+                    edu += "\\\\\n\\underline{Degree}: "
+                edu += institute["graduation"]
             if institute.get("ba_topic", False):
                 if data["language"] == "german":
-                    latex += "\\\\\n\\underline{Thema der Bachelorarbeit}: "
+                    edu += "\\\\\n\\underline{Thema der Bachelorarbeit}: "
                 else:
-                    latex += "\\\\\n\\underline{Topic of Bachelorthesis}: "
-                latex += institute["ba_topic"]
+                    edu += "\\\\\n\\underline{Topic of Bachelorthesis}: "
+                edu += institute["ba_topic"]
             if institute.get("focus", False):
                 if data["language"] == "german":
                     if institute.get("focus", False):
-                        latex += "\\\\\n\\underline{Schwerpunkt}: "
+                        edu += "\\\\\n\\underline{Schwerpunkt}: "
                     else:
-                        latex += "\\\\\n\\underline{Schwerpunkte}: "
+                        edu += "\\\\\n\\underline{Schwerpunkte}: "
                 else:
-                    latex += "\\\\\n\\underline{Focus}: "
+                    edu += "\\\\\n\\underline{Focus}: "
                 for item in institute["focus"]:
-                    latex += item
+                    edu += item
                     if item != institute["focus"][-1]:
-                        latex += ", "
+                        edu += ", "
     # work experience
+    work = ""
     if data.get("work", False):
         if data["language"] == "german":
-            latex += "\\section*{\\faGears\\ Arbeitserfahrung}\n"
+            work += "\\section*{\\faGears\\ Arbeitserfahrung}\n"
         else:
-            latex += "\\section*{\\faGears\\ Work Experience}\n"
-        for company in data["work"]:
-            latex += "\\subsection*{{{0}}}\n".format(company["company"])
-            latex += "\\faMapMarker\\ {}".format(company["place"])
-            if company.get("end", False):
-                latex += " \\ \\faCalendar\\ {} - {}".format(
-                    company["begin"], company["end"])
+            work += "\\section*{\\faGears\\ Work Experience}\n"
+        if "limEx" in data.keys():
+            lim = int(data["limEx"])
+        else:
+            lim = len(data["work"])
+        for i in range(lim):
+            work += "\\subsection*{{{0}}}\n".format(data["work"][i]["company"])
+            work += "\\faMapMarker\\ {}".format(data["work"][i]["place"])
+            if data["work"][i].get("end", False):
+                work += " \\ \\faCalendar\\ {} - {}".format(
+                    data["work"][i]["begin"], data["work"][i]["end"])
             else:
-                latex += " \\ \\faCalendar\\ {}".format(company["begin"])
-            if company.get("duration", False):
-                latex += " ({})".format(company["duration"])
-            if company.get("role", False):
-                latex += "\\\\\n\\textit{{{0}}}".format(company["role"])
-            if company.get("tasks", False):
-                latex += "\\\\\n"
-                for task in company["tasks"]:
-                    latex += task
-                    if task != company["tasks"][-1]:
-                        latex += "; "
-            latex += "\n"
+                work += " \\ \\faCalendar\\ {}".format(data["work"][i]["begin"])
+            if data["work"][i].get("duration", False):
+                work += " ({})".format(data["work"][i]["duration"])
+            if data["work"][i].get("role", False):
+                work += "\\\\\n\\textit{{{0}}}".format(data["work"][i]["role"])
+            if data["work"][i].get("tasks", False):
+                work += "\\\\\n"
+                for task in data["work"][i]["tasks"]:
+                    work += task
+                    if task != data["work"][i]["tasks"][-1]:
+                        work += "; "
+            work += "\n"
+
+    if data.get("workPrio"):
+        latex += work + edu
+    else:
+        latex += edu + work
     # civil service
     if data.get("civil_service", False):
         if data["language"] == "german":
@@ -253,8 +269,13 @@ if sys.argv[-1].lower() == "pdf":
     latex += "\n}\n"
     latex += "\\end{document}"
 
+    latex2 = ""
+    for letter in latex:
+        if letter == "&":
+            letter = "\\&"
+        latex2 += letter
     with open("cv.tex", 'w') as tex:
-        tex.write(latex)
+        tex.write(latex2)
 
     # use lualatex for generating pdf
     os.system("lualatex cv.tex")
