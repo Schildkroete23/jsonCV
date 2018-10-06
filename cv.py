@@ -10,7 +10,7 @@ with open(sys.argv[1], 'r') as jsonData:
 if sys.argv[-1].lower() == "pdf":
     # write data to tex file
     latex = "\\documentclass[11pt]{article}\n"
-    latex += "\\usepackage[ngerman, english]{babel}\n"
+    latex += "\\usepackage[{0}]{{babel}}\n".format(data["language"])
     latex += "\\usepackage{fontawesome}\n"
     # set main font type
     latex += "\\setmainfont{SOURCE SANS PRO}\n"
@@ -26,10 +26,6 @@ if sys.argv[-1].lower() == "pdf":
     latex += "{0ex}{}\n"
     latex += "\\titlespacing*{\\subsection}{0ex}{2ex}{0ex}\n"
     latex += "\\begin{document}%\n"
-    if data["language"] == "german":
-        latex += "\selectlanguage{ngerman}\n"
-    else:
-        latex += "\selectlanguage{english}\n"
     # turn off page numbering
     latex += "\\pagenumbering{gobble}%\n"
     # general information
@@ -117,6 +113,15 @@ if sys.argv[-1].lower() == "pdf":
         else:
             latex += "Place of Birth:\\\\{{\\textit{{{}}}}}\n".format(
                 data["birthplace"])
+    # about me
+    if data.get("about", False):
+        if data["language"] == "german":
+            latex += "\\subsection*{\\faUser\\ Über mich}\n"
+        else:
+            latex += "\\subsection*{\\faUser\\ About Me}\n"
+        latex += "\\begin{flushleft}\n"
+        latex += "{}".format(data["about"])
+        latex += "\n\\end{flushleft}"
     # languages
     if data.get("languages", False):
         if data["language"] == "german":
@@ -186,10 +191,16 @@ if sys.argv[-1].lower() == "pdf":
                 edu += institute["graduation"]
             if institute.get("ba_topic", False):
                 if data["language"] == "german":
-                    edu += "\\\\\n\\underline{Thema der Bachelorarbeit}: "
+                    edu += "\\\\\n\\underline{Thema der Masterarbeit}: "
                 else:
-                    edu += "\\\\\n\\underline{Topic of Bachelorthesis}: "
+                    edu += "\\\\\n\\underline{Topic of Master Thesis}: "
                 edu += institute["ba_topic"]
+            if institute.get("ma_topic", False):
+                if data["language"] == "german":
+                    edu += "\\\\\n\\underline{Thema der Masterarbeit}: "
+                else:
+                    edu += "\\\\\n\\underline{Topic of Master Thesis}: "
+                edu += institute["ma_topic"]
             if institute.get("focus", False):
                 if data["language"] == "german":
                     if institute.get("focus", False):
@@ -238,7 +249,7 @@ if sys.argv[-1].lower() == "pdf":
     else:
         latex += edu + work
     # civil service
-    if data.get("civil_service", False):
+    if data["limCs"] != "0" and data.get("civil_service", False):
         if data["language"] == "german":
             latex += "\\section*{\\faGroup\\ Zivildienst}\n"
         else:
@@ -284,7 +295,7 @@ if sys.argv[-1].lower() == "pdf":
 elif sys.argv[-1].lower() == "html":
     html = "<!DOCTYPE html><html>"
     # title of page
-    html += "<title>Lebenslauf</title>"
+    html += "<title>Resume</title>"
     # use unicode
     html += "<meta charset='UTF-8'>"
     # load css
@@ -322,6 +333,11 @@ elif sys.argv[-1].lower() == "html":
                                                         data["country"])
     else:
         html += "w3-text-teal'></i>{0}</p>".format(data["city"])
+    # phone
+    html += "<p><i class='fa fa-phone fa-fw w3-margin-right w3-large "
+    html += "w3-text-teal'></i>"
+    html += "{0}".format(data["phone"])
+    html += "</a></p>"
     # email
     html += "<p><i class='fa fa-envelope fa-fw w3-margin-right w3-large "
     html += "w3-text-teal'></i>"
@@ -335,6 +351,14 @@ elif sys.argv[-1].lower() == "html":
         html += "<a href='{0}' style='text-decoration: none'>{0}".format(
             data["homepage"])
         html += "</a></p>"
+    # about me
+    html += "<hr><p class='w3-large'><b>"
+    html += "<i class='fa fa-user fa-fw w3-margin-right w3-text-teal'>"
+    if data["language"] == "german":
+        html += "</i>Über Mich</b></p>"
+    else:
+        html += "</i>About Me</b></p>"
+    html += "<p>{}</p>".format(data["about"])
     # languages
     html += "<hr><p class='w3-large'><b>"
     html += "<i class='fa fa-globe fa-fw w3-margin-right w3-text-teal'>"
@@ -408,8 +432,15 @@ elif sys.argv[-1].lower() == "html":
                 html += "<br>Thema der Bachelorarbeit: {}".format(
                     institute["ba_topic"])
             else:
-                html += "<br>Topic of Bachelorthesis: {}".format(
+                html += "<br>Topic of Bachelor Thesis: {}".format(
                     institute["ba_topic"])
+        if institute.get("ma_topic", False):
+            if data["language"] == "german":
+                html += "<br>Thema der Masterarbeit: {}".format(
+                    institute["ma_topic"])
+            else:
+                html += "<br>Topic of Master Thesis: {}".format(
+                    institute["ma_topic"])
         if institute.get("focus", False):
             if data["language"] == "german":
                 if len(institute["focus"]) == 1:
