@@ -9,7 +9,7 @@ with open(sys.argv[1], 'r') as jsonData:
 
 if sys.argv[-1].lower() == "pdf":
     # write data to tex file
-    latex = "\\documentclass[11pt]{article}\n"
+    latex = "\\documentclass[10pt]{article}\n"
     latex += "\\usepackage[{0}]{{babel}}\n".format(data["language"])
     latex += "\\usepackage{fontawesome}\n"
     # set main font type
@@ -19,12 +19,23 @@ if sys.argv[-1].lower() == "pdf":
               "right=1cm]{geometry}\n")
     latex += "\\usepackage{titlesec}\n"
     latex += "\\usepackage{graphicx}\n"
+    latex += "\\usepackage{tikz}\n"
+    latex += "\\usepackage{enumitem}\n"
+    latex += "\\usepackage{calc}\n"
     latex += "\\titleformat{\\section}{\\Large\\scshape\\raggedright}{}{0ex}{}"
     latex += "[\\titlerule]\n"
     latex += "\\titlespacing*{\\section}{0em}{2ex}{2ex}\n"
     latex += "\\titleformat{\\subsection}{\\large\\bfseries\\raggedright}{}"
     latex += "{0ex}{}\n"
     latex += "\\titlespacing*{\\subsection}{0ex}{2ex}{0ex}\n"
+    latex += "\\setlist[itemize]{noitemsep, topsep=0pt}\n"
+    latex += "\\newcommand\\rulebox[3]{%\n"
+    latex += "\\begingroup\n"
+    latex += "\\setlength{\\fboxsep}{0pt}%\n"
+    latex += "\\colorbox{black}{\\parbox[c][10pt][c]{#2\\linewidth}{\\centering\\textcolor{white}{\\scriptsize{#1}}}}%\n"
+    latex += "\\colorbox{gray!40}{\\parbox[c][10pt][c]{#3\\linewidth}{\\textcolor{gray!40}{}}}%\n"
+    latex += "\\endgroup\n"
+    latex += "}\n"
     latex += "\\begin{document}%\n"
     # turn off page numbering
     latex += "\\pagenumbering{gobble}%\n"
@@ -37,7 +48,7 @@ if sys.argv[-1].lower() == "pdf":
         latex += "\\includegraphics[width=\\linewidth]{{{0}}}\n".format(
             data["picture"])
     latex += "\\begin{tabbing}%\n"
-    latex += "\\textbf{{\\Large\\scshape{{{0}}}}}".format(data["name"])
+    latex += "\\textbf{{\\LARGE\\scshape{{{0}}}}}".format(data["name"])
     # job
     if data.get("job", False):
         latex += "\\\\\n\\faBriefcase\\ {}".format(data["job"])
@@ -67,13 +78,13 @@ if sys.argv[-1].lower() == "pdf":
             latex += "\\\\\n\>{}".format(data["country"])
         else:
             latex += "\\\\\n{}".format(data["country"])
+    # phone number
+    if data.get("phone", False):
+        latex += "\\\\\n\\faPhone\\ {0}".format(data["phone"])
     # email address
     if data.get("mail", False):
         latex += "\\\\\n\\faEnvelope\\ \\href{{mailto:{0}}}{{{0}}}".format(
             data["mail"])
-    # phone number
-    if data.get("phone", False):
-        latex += "\\\\\n\\faPhone\\ {0}".format(data["phone"])
     # homepage
     if data.get("homepage", False):
         latex += "\\\\\n\\faLink\\ \\href{{{0}}}{{{0}}}\n".format(
@@ -83,12 +94,12 @@ if sys.argv[-1].lower() == "pdf":
     if (data.get("nationality", False)
             or data.get("birthday", False)
             or data.get("birthplace", False)):
-        if data["language"] == "german":
+        if data["language"] in ["ngerman", "nswissgerman"]:
             latex += "\\subsection*{\\faInfo\\ Persönliche Daten}\n"
         else:
             latex += "\\subsection*{\\faInfo\\ Personal Data}\n"
     if data.get("nationality", False):
-        if data["language"] == "german":
+        if data["language"] in ["ngerman", "nswissgerman"]:
             latex += "Staatsangehörigkeit:\\\\ {\\textit{"
         else:
             latex += "Nationality:\\\\ {\\textit{"
@@ -100,14 +111,14 @@ if sys.argv[-1].lower() == "pdf":
                 latex += ", "
         latex += "}}\\\\\n"
     if data.get("birthday", False):
-        if data["language"] == "german":
+        if data["language"] in ["ngerman", "nswissgerman"]:
             latex += "Geburtsdatum:\\\\{{\\textit{{{}}}}}\\\\\n".format(
                 data["birthday"])
         else:
             latex += "Date of Birth:\\\\{{\\textit{{{}}}}}\\\\\n".format(
                 data["birthday"])
     if data.get("birthplace", False):
-        if data["language"] == "german":
+        if data["language"] in ["ngerman", "nswissgerman"]:
             latex += "Geburtsort:\\\\{{\\textit{{{}}}}}\n".format(
                 data["birthplace"])
         else:
@@ -115,7 +126,7 @@ if sys.argv[-1].lower() == "pdf":
                 data["birthplace"])
     # about me
     if data.get("about", False):
-        if data["language"] == "german":
+        if data["language"] in ["ngerman", "nswissgerman"]:
             latex += "\\subsection*{\\faUser\\ Über mich}\n"
         else:
             latex += "\\subsection*{\\faUser\\ About Me}\n"
@@ -124,47 +135,55 @@ if sys.argv[-1].lower() == "pdf":
         latex += "\n\\end{flushleft}"
     # languages
     if data.get("languages", False):
-        if data["language"] == "german":
+        if data["language"] in ["ngerman", "nswissgerman"]:
             latex += "\\subsection*{\\faGlobe\\ Sprachen}\n"
         else:
             latex += "\\subsection*{\\faGlobe\\ Languages}\n"
         latex += "\\begin{flushleft}\n"
         for language in data["languages"]:
-            latex += language
-            if language != data["languages"][-1]:
-                latex += ", "
+            for lan in language[0]:
+                latex += lan
+                if lan != language[0][-1]:
+                    latex += ", "
+            latex += "\n\\rulebox{{{0}}}{{{1}}}{{{2}}}\n".format(language[1], float(language[2]) / 100, 1 - float(language[2]) / 100)
         latex += "\n\\end{flushleft}"
     # coding skills
     if data.get("coding", False):
-        if data["language"] == "german":
+        if data["language"] in ["ngerman", "nswissgerman"]:
             latex += "\n\\subsection*{\\faCode\\ Computerprachen}\n"
         else:
             latex += "\n\\subsection*{\\faCode\\ Coding}\n"
         latex += "\\begin{flushleft}\n"
         for item in data["coding"]:
-            latex += item
-            if item != data["coding"][-1]:
-                latex += ", "
+            for it in item[0]:
+                latex += it
+                if it != item[0][-1]:
+                    latex += ", "
+            latex += "\n\\rulebox{{{0}}}{{{1}}}{{{2}}}\n".format(item[1], float(item[2]) / 100, 1 - float(item[2]) / 100)
         latex += "\n\\end{flushleft}"
     # software skills
     if data.get("software", False):
         latex += "\n\\subsection*{\\faDesktop\\ Software}\n"
         latex += "\\begin{flushleft}\n"
         for item in data["software"]:
-            latex += item
-            if item != data["software"][-1]:
-                latex += ", "
+            for it in item[0]:
+                latex += it
+                if it != item[0][-1]:
+                    latex += ", "
+            latex += "\n\\rulebox{{{0}}}{{{1}}}{{{2}}}\n".format(item[1], float(item[2]) / 100, 1 - float(item[2]) / 100)
         latex += "\n\\end{flushleft}"
-    latex += "\n\\vfill\n"
     # place and date for signature
-    latex += "{}, \\today\\\\\n\\\\\n\\\\%\n}}%\n".format(data["city"])
+    if data["language"] in ["ngerman"]:
+        latex += "\n\\vfill\n"
+        latex += "{}, \\today\\\\\n\\\\\n\\\\%\n".format(data["city"])
+    latex += "}%\n%\n"
     latex += "\\hfill\\vline\\hfill%\n"
     latex += "\parbox[t][.99\\textheight]{.7\\textwidth}{%\n"
     latex += "\\vspace{0pt}%\n"
     # education
     edu = ""
     if data.get("education", False):
-        if data["language"] == "german":
+        if data["language"] in ["ngerman", "nswissgerman"]:
             edu += "\\section*{\\faGraduationCap\\ Bildung}\n"
         else:
             edu += "\\section*{\\faGraduationCap\\ Education}\n"
@@ -182,41 +201,43 @@ if sys.argv[-1].lower() == "pdf":
             else:
                 edu += " \\ \\faCalendar\\ {}".format(institute["begin"])
             if institute.get("role", False):
-                edu += "\\\\\n\\textit{{{0}}}".format(institute["role"])
+                edu += "\\\\\n{0}".format(institute["role"])
             if institute.get("graduation", False):
-                if data["language"] == "german":
-                    edu += "\\\\\n\\underline{Abschluss}: "
+                edu += "\n\\begin{itemize}\n"
+                if data["language"] in ["ngerman", "nswissgerman"]:
+                    edu += "\\item Abschluss: "
                 else:
-                    edu += "\\\\\n\\underline{Degree}: "
-                edu += institute["graduation"]
+                    edu += "\\item Degree: "
+                edu += institute["graduation"] + "\n"
             if institute.get("ba_topic", False):
-                if data["language"] == "german":
-                    edu += "\\\\\n\\underline{Thema der Masterarbeit}: "
+                if data["language"] in ["ngerman", "nswissgerman"]:
+                    edu += "\\item Thema der Bachelorarbeit: "
                 else:
-                    edu += "\\\\\n\\underline{Topic of Master Thesis}: "
-                edu += institute["ba_topic"]
+                    edu += "\\item Topic of Bachelor Thesis: "
+                edu += institute["ba_topic"] + "\n"
             if institute.get("ma_topic", False):
-                if data["language"] == "german":
-                    edu += "\\\\\n\\underline{Thema der Masterarbeit}: "
+                if data["language"] in ["ngerman", "nswissgerman"]:
+                    edu += "\\item Thema der Masterarbeit: "
                 else:
-                    edu += "\\\\\n\\underline{Topic of Master Thesis}: "
-                edu += institute["ma_topic"]
+                    edu += "\\item Topic of Master Thesis: "
+                edu += institute["ma_topic"] + "\n"
             if institute.get("focus", False):
-                if data["language"] == "german":
+                if data["language"] in ["ngerman", "nswissgerman"]:
                     if institute.get("focus", False):
-                        edu += "\\\\\n\\underline{Schwerpunkt}: "
+                        edu += "\\item Schwerpunkt: "
                     else:
-                        edu += "\\\\\n\\underline{Schwerpunkte}: "
+                        edu += "\\item Schwerpunkte: "
                 else:
-                    edu += "\\\\\n\\underline{Focus}: "
+                    edu += "\\item Focus: "
                 for item in institute["focus"]:
                     edu += item
                     if item != institute["focus"][-1]:
                         edu += ", "
+                edu += "\n\\end{itemize}\n"
     # work experience
     work = ""
     if data.get("work", False):
-        if data["language"] == "german":
+        if data["language"] in ["ngerman", "nswissgerman"]:
             work += "\\section*{\\faGears\\ Arbeitserfahrung}\n"
         else:
             work += "\\section*{\\faGears\\ Work Experience}\n"
@@ -235,14 +256,14 @@ if sys.argv[-1].lower() == "pdf":
             if data["work"][i].get("duration", False):
                 work += " ({})".format(data["work"][i]["duration"])
             if data["work"][i].get("role", False):
-                work += "\\\\\n\\textit{{{0}}}".format(data["work"][i]["role"])
+                work += "\\\\\n{0}".format(data["work"][i]["role"])
             if data["work"][i].get("tasks", False):
-                work += "\\\\\n"
+                work += "\n\\begin{itemize}\n"
                 for task in data["work"][i]["tasks"]:
+                    work += "\\item "
                     work += task
-                    if task != data["work"][i]["tasks"][-1]:
-                        work += "; "
-            work += "\n"
+                    work += "\n"
+                work += "\\end{itemize}\n"
 
     if data.get("workPrio"):
         latex += work + edu
@@ -250,10 +271,10 @@ if sys.argv[-1].lower() == "pdf":
         latex += edu + work
     # civil service
     if data["limCs"] != "0" and data.get("civil_service", False):
-        if data["language"] == "german":
+        if data["language"] in ["ngerman", "nswissgerman"]:
             latex += "\\section*{\\faGroup\\ Zivildienst}\n"
         else:
-            latex += "\\section*{\\faGroup\\ Civilian Service}\n"
+            latex += "\\section*{\\faGroup\\ Community Service}\n"
         for company in data["civil_service"]:
             tmpWord = ""
             for letter in company["company"]:
@@ -295,7 +316,7 @@ if sys.argv[-1].lower() == "pdf":
 elif sys.argv[-1].lower() == "html":
     html = "<!DOCTYPE html><html>"
     # title of page
-    html += "<title>Resume</title>"
+    html += "<title>CV</title>"
     # use unicode
     html += "<meta charset='UTF-8'>"
     # load css
@@ -352,13 +373,14 @@ elif sys.argv[-1].lower() == "html":
             data["homepage"])
         html += "</a></p>"
     # about me
-    html += "<hr><p class='w3-large'><b>"
-    html += "<i class='fa fa-user fa-fw w3-margin-right w3-text-teal'>"
-    if data["language"] == "german":
-        html += "</i>Über Mich</b></p>"
-    else:
-        html += "</i>About Me</b></p>"
-    html += "<p>{}</p>".format(data["about"])
+    if data.get("about", False):
+        html += "<hr><p class='w3-large'><b>"
+        html += "<i class='fa fa-user fa-fw w3-margin-right w3-text-teal'>"
+        if data["language"] == "german":
+            html += "</i>Über Mich</b></p>"
+        else:
+            html += "</i>About Me</b></p>"
+        html += "<p>{}</p>".format(data["about"])
     # languages
     html += "<hr><p class='w3-large'><b>"
     html += "<i class='fa fa-globe fa-fw w3-margin-right w3-text-teal'>"
@@ -367,9 +389,11 @@ elif sys.argv[-1].lower() == "html":
     else:
         html += "</i>Languages</b></p>"
     for language in data["languages"]:
-        html += "<div class='w3-container w3-center w3-round-xlarge w3-teal' "
-        html += "style='display: inline-block; margin: 3px;'>"
-        html += "{0}</div>".format(language)
+        for lan in language[0]:
+            html += lan
+            if lan != language[0][-1]:
+                html += ", "
+        html += "<div class=\"w3-light-grey w3-round-xlarge w3-small\"><div class=\"w3-container w3-center w3-round-xlarge w3-teal\" style=\"width:{}%\">{}</div></div>".format(language[2], language[1])
     # coding skills
     html += "<hr><p class='w3-large'><b>"
     html += "<i class='fa fa-code fa-fw w3-margin-right w3-text-teal'>"
@@ -378,17 +402,21 @@ elif sys.argv[-1].lower() == "html":
     else:
         html += "</i>Coding</b></p>"
     for language in data["coding"]:
-        html += "<div class='w3-container w3-center w3-round-xlarge w3-teal' "
-        html += "style='display: inline-block; margin: 3px;'>"
-        html += "{0}</div>".format(language)
+        for lan in language[0]:
+            html += lan
+            if lan != language[0][-1]:
+                html += ", "
+        html += "<div class=\"w3-light-grey w3-round-xlarge w3-small\"><div class=\"w3-container w3-center w3-round-xlarge w3-teal\" style=\"width:{}%\">{}</div></div>".format(language[2], language[1])
     # software skills
     html += "<hr><p class='w3-large'><b>"
     html += "<i class='fa fa-desktop fa-fw w3-margin-right w3-text-teal'>"
     html += "</i>Software</b></p>"
     for item in data["software"]:
-        html += "<div class='w3-container w3-center w3-round-xlarge w3-teal' "
-        html += "style='display: inline-block; margin: 3px;'>"
-        html += "{0}</div>".format(item)
+        for it in item[0]:
+            html += it
+            if it != item[0][-1]:
+                html += ", "
+        html += "<div class=\"w3-light-grey w3-round-xlarge w3-small\"><div class=\"w3-container w3-center w3-round-xlarge w3-teal\" style=\"width:{}%\">{}</div></div>".format(item[2], item[1])
     html += "</div><br></div></div>"
 
     html += "<div class='w3-twothird'>"
@@ -419,44 +447,44 @@ elif sys.argv[-1].lower() == "html":
                 html += institute["end"]
         if institute.get("duration", False):
             html += " ({})".format(institute["duration"])
-        html += "</h6><p><i>"
+        html += "</h6><p>"
         html += institute["role"]
-        html += "</i>"
+        html += "<ul>"
         if institute.get("graduation", False):
             if data["language"] == "german":
-                html += "<br>Abschluss: {}".format(institute["graduation"])
+                html += "<li>Abschluss: {}</li>".format(institute["graduation"])
             else:
-                html += "<br>Degree: {}".format(institute["graduation"])
+                html += "<li>Degree: {}</li>".format(institute["graduation"])
         if institute.get("ba_topic", False):
             if data["language"] == "german":
-                html += "<br>Thema der Bachelorarbeit: {}".format(
+                html += "<li>Thema der Bachelorarbeit: {}</li>".format(
                     institute["ba_topic"])
             else:
-                html += "<br>Topic of Bachelor Thesis: {}".format(
+                html += "<li>Topic of Bachelor Thesis: {}</li>".format(
                     institute["ba_topic"])
         if institute.get("ma_topic", False):
             if data["language"] == "german":
-                html += "<br>Thema der Masterarbeit: {}".format(
+                html += "<li>Thema der Masterarbeit: {}</li>".format(
                     institute["ma_topic"])
             else:
-                html += "<br>Topic of Master Thesis: {}".format(
+                html += "<li>Topic of Master Thesis: {}</li>".format(
                     institute["ma_topic"])
         if institute.get("focus", False):
             if data["language"] == "german":
                 if len(institute["focus"]) == 1:
-                    html += "<br>Schwerpunkt: "
+                    html += "<li>Schwerpunkt: "
                 else:
-                    html += "<br>Schwerpunkte: "
+                    html += "<li>Schwerpunkte: "
             else:
-                html += "<br>Focus: "
+                html += "<li>Focus: "
             for item in institute["focus"]:
                 html += item
                 if item != institute["focus"][-1]:
                     html += ", "
         if institute != data["education"][-1]:
-            html += "</p><hr></div>"
+            html += "</ul></p><hr></div>"
         else:
-            html += "</p></div>"
+            html += "</ul></p></div>"
     html += "</div>"
     # work experience
     html += "<div class='w3-container w3-card-2 w3-white w3-margin-bottom'>"
@@ -485,13 +513,13 @@ elif sys.argv[-1].lower() == "html":
                 html += company["end"]
         if company.get("duration", False):
             html += " ({})".format(company["duration"])
-        html += "</h6><p><i>"
+        html += "</h6><p>"
         html += company["role"]
-        html += "</i><br>"
+        html += "<br>"
+        html += "<ul>"
         for task in company["tasks"]:
-            html += task
-            if task != company["tasks"][-1]:
-                html += "; "
+            html += "<li>" + task + "</li>"
+        html += "</ul>"
         if company != data["work"][-1]:
             html += "</p><hr></div>"
         else:
@@ -505,7 +533,7 @@ elif sys.argv[-1].lower() == "html":
         if data["language"] == "german":
             html += "w3-text-teal'></i>Zivildienst</h2>"
         else:
-            html += "w3-text-teal'></i>Civilian Service</h2>"
+            html += "w3-text-teal'></i>Community Service</h2>"
         for company in data["civil_service"]:
             html += "<div class='w3-container'><h5 class='w3-opacity'><b>"
             html += company["company"]
@@ -527,13 +555,13 @@ elif sys.argv[-1].lower() == "html":
                     html += company["end"]
             if company.get("duration", False):
                 html += " ({})".format(company["duration"])
-            html += "</h6><p><i>"
+            html += "</h6><p>"
             html += company["role"]
-            html += "</i><br>"
+            html += "<br>"
+            html += "<ul>"
             for task in company["tasks"]:
-                html += task
-                if task != company["tasks"][-1]:
-                    html += "; "
+                html += "<li>" + task + "</li>"
+            html += "</ul>"
             html += "</p></div>"
     html += "</div></div></div></div>"
     # footer
